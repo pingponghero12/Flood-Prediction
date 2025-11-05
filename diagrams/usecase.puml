@@ -1,0 +1,66 @@
+@startuml
+
+' --- Style Definitions ---
+' Global font size
+skinparam defaultFontSize 14
+
+' Use a modern stick-figure actor
+skinparam actorStyle awesome
+
+' Actor style
+skinparam actor {
+    BorderColor #2C3E50
+    BackgroundColor #AED6F1
+}
+
+' Usecase style (sharp edges)
+skinparam usecase {
+    BorderColor #1A5276
+    BackgroundColor #D6EAF8
+    roundCorner 0
+}
+
+' System boundary rectangle (sharp edges)
+skinparam rectangle {
+    BorderColor #196F3D
+    BackgroundColor #D5F5E3
+    shadowing false
+    roundCorner 0
+}
+
+' Arrow style
+skinparam arrow {
+    color #283747
+    thickness 1.5
+}
+
+left to right direction
+
+' Define the actor
+actor "User" as user
+
+' Define the system boundary
+rectangle "Flood Prediction System" {
+    ' Main use cases
+    usecase "Generate Single Prediction" as UC1
+    usecase "Start Real-Time Monitoring" as UC2
+    
+    ' Sub-tasks or included steps
+    usecase "Set Time Parameters" as UC_Time
+    usecase "View Pixel-Wise Flood Map" as UC_View
+}
+
+' Actor's interactions with the system
+user -- UC1
+user -- UC2
+
+' The "extend" relationship means this is an optional or alternative flow.
+' The user *extends* the single prediction by specifying a historical/future date.
+(UC1) .> (UC_Time) : <<extend>>
+
+' The "include" relationship means this step is required.
+' Both main use cases must include viewing the results.
+UC1 ..> UC_View : <<include>>
+UC2 ..> UC_View : <<include>>
+
+@enduml

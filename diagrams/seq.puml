@@ -1,0 +1,98 @@
+@startuml
+
+' --- Style Definitions ---
+' Global font size
+skinparam defaultFontSize 14
+
+' Participant styles with sharp edges
+skinparam participant {
+    BorderColor #1A5276
+    BackgroundColor #D6EAF8
+    roundCorner 0
+}
+skinparam actor {
+    BorderColor #2C3E50
+    BackgroundColor #AED6F1
+    roundCorner 0
+}
+skinparam boundary {
+    BorderColor #154360
+    BackgroundColor #D4E6F1
+    roundCorner 0
+}
+
+' Other styles
+skinparam arrow {
+    color #283747
+    thickness 1.5
+}
+skinparam lifeline {
+    BorderColor #1B4F72
+}
+
+' --- Participants ---
+actor "User" as user
+participant "Flood Prediction System" as System
+participant "Topographic Data Module" as Topo
+participant "Meteorological Data Module" as Meteo
+participant "Vegetation Data Module" as Vege
+participant "Data Integration Module" as Integration
+participant "Prediction Algorithm Module" as Prediction
+participant "Data Visualization Module" as Vis
+
+' --- Data Sources ---
+boundary "DEM Copernicus" as Copernicus
+boundary "Weather Forecast" as Weather
+boundary "Sentinel2" as Sentinel
+
+' --- Sequence of Events ---
+user -> System: Request Single Prediction(time="+24h", coords="49.0, 21.3")
+activate System
+
+== Data Acquisition ==
+
+System -> Topo: Fetch topographic data(coords="...")
+activate Topo
+Topo -> Copernicus: Get DEM data
+Copernicus --> Topo: Return DEM data
+Topo --> System: Return processed topographic data
+deactivate Topo
+
+' Note: The following data fetching can run in parallel
+System -> Meteo: Fetch forecast data(time="+24h", coords="...")
+activate Meteo
+Meteo -> Weather: Get forecast
+Weather --> Meteo: Return weather data
+Meteo --> System: Return processed weather data
+deactivate Meteo
+
+System -> Vege: Fetch vegetation data(coords="...")
+activate Vege
+Vege -> Sentinel: Get latest imagery
+Sentinel --> Vege: Return satellite data
+Vege --> System: Return processed vegetation data
+deactivate Vege
+
+== Core Processing ==
+
+System -> Integration: Integrate datasets
+activate Integration
+Integration --> System: Return integrated data
+deactivate Integration
+
+System -> Prediction: Run flood prediction algorithm
+activate Prediction
+Prediction --> System: Return pixel-wise flood probability
+deactivate Prediction
+
+== Result Presentation ==
+
+System -> Vis: Generate flood map
+activate Vis
+Vis --> System: Return generated map
+deactivate Vis
+
+System --> user: Display Flood Prediction Map
+deactivate System
+
+@enduml

@@ -1,0 +1,107 @@
+@startuml
+
+' --- Style Definitions ---
+' Global font size
+skinparam defaultFontSize 14
+
+' Default styles with sharp edges
+skinparam rectangle {
+    shadowing false
+    roundCorner 0
+}
+skinparam package {
+    shadowing false
+    roundCorner 0
+}
+skinparam database {
+    shadowing false
+    roundCorner 0
+}
+skinparam arrow {
+    color #283747
+    thickness 1.5
+}
+
+' --- Color Palette using Stereotypes ---
+' Data sources
+skinparam database {
+    BorderColor #154360
+    BackgroundColor #D4E6F1
+}
+' Single-run module (blue)
+skinparam package<<SingleRun>> {
+    BorderColor #1A5276
+    BackgroundColor #D6EAF8
+}
+' Real-Time Loop (green)
+skinparam package<<Loop>> {
+    BorderColor #196F3D
+    BackgroundColor #D5F5E3
+}
+' Core processing modules (orange)
+skinparam rectangle<<Core>> {
+    BorderColor #AF601A
+    BackgroundColor #FAD7A0
+}
+' Final visualization module (yellow)
+skinparam rectangle<<Vis>> {
+    BorderColor #B7950B
+    BackgroundColor #FCF3CF
+}
+' Data processing steps (light blue)
+skinparam rectangle<<Process>> {
+    BorderColor #1A5276
+    BackgroundColor #A9CCE3
+}
+
+
+' --- Data Sources ---
+database "DEM Copernicus" as Copernicus
+database "Sentinel2" as Sentinel
+database "Weather Forecast" as Weather
+
+' --- Single-run Module ---
+package "Topographic Data Module" <<SingleRun>> {
+    rectangle "Data Fetching" as TopoRead
+    rectangle "Data Processing" as TopoProcess <<Process>>
+    TopoRead -> TopoProcess
+}
+
+' --- Real-Time Loop ---
+package "Real-Time Loop" <<Loop>> {
+    ' Input Data Modules for the loop
+    package "Meteorological Data Module" {
+        rectangle "Data Fetching" as MeteoRead
+        rectangle "Data Processing" as MeteoProcess <<Process>>
+        MeteoRead -> MeteoProcess
+    }
+
+    package "Vegetation Data Module" {
+        rectangle "Data Fetching" as VegeRead
+        rectangle "Data Processing" as VegeProcess <<Process>>
+        VegeRead -> VegeProcess
+    }
+
+    ' Core processing modules are now inside the loop
+    rectangle "Data Integration Module" as IntegrationModule <<Core>>
+    rectangle "Prediction Algorithm Module" as PredictionModule <<Core>>
+    rectangle "Data Visualization Module" as VisualizationModule <<Vis>>
+
+    ' Data flow into loop modules
+    Weather --> MeteoRead
+    Sentinel --> VegeRead
+    
+    ' Internal data flow inside the loop
+    MeteoProcess --> IntegrationModule
+    VegeProcess --> IntegrationModule
+    IntegrationModule --> PredictionModule
+    PredictionModule --> VisualizationModule
+}
+
+
+' --- Data Flow ---
+' From single-run module into the loop
+Copernicus --> TopoRead
+TopoProcess --> IntegrationModule
+
+@enduml
