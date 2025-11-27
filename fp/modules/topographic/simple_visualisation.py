@@ -40,7 +40,7 @@ def visualize_topography_data_separate():
                     data[data == -np.inf] = np.nan 
                     cmap = 'Blues'
                 elif "Kierunek" in title: # Kierunek przepływu
-                    data = np.where(data > 0, np.log2(data), np.nan)
+                    data = np.where(data > 0, np.log2(data) + 1, 0)
                     cmap = 'Spectral'
                 elif "TWI" in title:
                     cmap = 'YlGnBu'
