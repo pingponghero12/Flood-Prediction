@@ -6,7 +6,7 @@ import numpy as np
 # ───────────────────────────────────────────────────────────
 # KONFIGURACJA ŚCIEŻEK
 # ───────────────────────────────────────────────────────────
-OUT_DIR = "outputs" # Katalog, w którym zapisane są wszystkie pliki
+OUT_DIR = os.path.abspath("outputs") # Katalog, w którym zapisane są wszystkie pliki
 FILES_TO_VISUALIZE = {
     "1. Wypełniony DEM": f"{OUT_DIR}/dem_filled.tif",
     "2. Kierunek Przepływu (D8)": f"{OUT_DIR}/flow_dir.tif",
@@ -40,6 +40,7 @@ def visualize_topography_data_separate():
                     data[data == -np.inf] = np.nan 
                     cmap = 'Blues'
                 elif "Kierunek" in title: # Kierunek przepływu
+                    data = np.where(data > 0, np.log2(data), np.nan)
                     cmap = 'Spectral'
                 elif "TWI" in title:
                     cmap = 'YlGnBu'

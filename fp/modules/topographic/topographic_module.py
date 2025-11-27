@@ -10,7 +10,7 @@ import os
 # ───────────────────────────────────────────────────────────
 # Musiałem dać absolute path bo whitebox odpala się gdzieś indziej zmieńcie sobie
 DEM_PATH = os.path.abspath("data.tif") 
-OUT_DIR = OUT_DIR = os.path.abspath("outputs")
+OUT_DIR = os.path.abspath("outputs")
 
 os.makedirs(OUT_DIR, exist_ok=True)
 
