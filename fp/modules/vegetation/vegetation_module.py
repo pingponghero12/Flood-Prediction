@@ -143,7 +143,11 @@ def get_vegetation_map(coords: Dict[str, float], time: str, is_single_run: bool)
     rgb = create_rgb_array(bands)
     
     # Save NDVI
-    profile.update(dtype=rasterio.float32, count=1)
+    profile.update(
+        driver="GTiff",
+        dtype=rasterio.float32,
+        count=1
+    )
     with rasterio.open(ndvi_geotiff_path, 'w', **profile) as dst:
         dst.write(ndvi.astype(rasterio.float32), 1)
 
