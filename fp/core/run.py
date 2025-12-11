@@ -14,7 +14,7 @@ def _ensure_out_dir(out_dir: str) -> None:
 def run(coords: Dict[str, float], time: Optional[str], out_dir: str = "outputs") -> Dict[str, Any]:
     _ensure_out_dir(out_dir)
 
-    topo = topographic_module(out_dir=out_dir, visualize=False)
+    topo = topographic_module(out_dir=out_dir, visualize=True)
     veg = get_vegetation_map(coords=coords, time=time or "", is_single_run=True)
     met = meteorological_module(coords=coords, time=time or "")
 

@@ -9,8 +9,8 @@ from fp.modules.data_visualization.data_visualization_module import (
     visualize_topography_data_separate,
 )
 
-DEFAULT_OUT_DIR = "outputs"
-DEFAULT_DEM = "data.tif"
+DEFAULT_OUT_DIR = os.path.abspath("outputs")
+DEFAULT_DEM = os.path.abspath("fp/modules/topographic/data.tif")
 
 DEFAULT_FILES = {
     "dem_filled": "dem_filled.tif",
@@ -83,15 +83,19 @@ def _run_whitebox(dem_path: str, out_dir: str):
         sca = acc * cellsize
         twi_arr = np.log(sca / np.tan(slope_rad))
 
-        # Save TWI
-        profile = acc_src.profile.copy()
-        profile.update(dtype=rasterio.float32, count=1)
+        with rasterio.open(dem_path) as src_dem:
+            dem_profile = src_dem.profile.copy()
 
-        with rasterio.open(twi, "w", **profile) as dst:
+        # Save TWI
+        twi_profile = dem_profile.copy()
+        twi_profile.update(dtype=rasterio.float32, count=1)
+
+        with rasterio.open(twi, "w", **twi_profile) as dst:
             dst.write(twi_arr.astype(np.float32), 1)
 
     except rasterio.RasterioIOError:
         # If something goes wrong, create NaN placeholder
+        print("ERROR")
         twi_arr = np.full((256, 256), np.nan)
         with rasterio.open(twi, "w", driver="GTiff",
                            height=256, width=256,

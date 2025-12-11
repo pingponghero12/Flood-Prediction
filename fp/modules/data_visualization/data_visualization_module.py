@@ -10,6 +10,14 @@ def _safe_maybe_log(arr):
         out = np.array(arr, dtype=float)
         out[out <= 0] = np.nan
         return np.log(out)
+    
+def _safe_maybe_log2(arr):
+    if arr is None:
+        return None
+    with np.errstate(divide="ignore", invalid="ignore"):
+        out = np.array(arr, dtype=float)
+        out[out <= 0] = np.nan
+        return np.log2(out)
 
 def visualize_topography_data_separate(data: Dict[str, Any], out_dir: str = "outputs") -> None:
     os.makedirs(out_dir, exist_ok=True)
@@ -36,6 +44,9 @@ def visualize_topography_data_separate(data: Dict[str, Any], out_dir: str = "out
         plot_arr = arr.copy()
         if key == "flow_acc":
             plot_arr = _safe_maybe_log(plot_arr)
+
+        if key == "flow_dir":
+            plot_arr = _safe_maybe_log2(plot_arr)
 
         cmap = "viridis"
         if "dem" in key or "slope" in key:
