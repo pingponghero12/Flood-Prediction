@@ -1,10 +1,11 @@
-from typing import Dict, Any
-import numpy as np
-from pathlib import Path
 import requests
 import zipfile
 import rasterio
+import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
+from rasterio.transform import from_origin
+from rasterio.crs import CRS
 
 def get_access_token(username, password):
     data = {
@@ -20,20 +21,23 @@ def get_access_token(username, password):
     if response.status_code == 200:
         return response.json()["access_token"]
     else:
-        raise Exception(f"Login failed:  {response.status_code} - {response.text}")
+        raise Exception(f"Login failed: {response.status_code} - {response.text}")
 
 def search_products_l2a(token, bbox, date_start, date_end, cloud_thresh=20):
     """Search for L2A products in bbox [(minlon,minlat,maxlon,maxlat)] and date range."""
-    url = "https://catalogue.dataspace.copernicus. eu/odata/v1/Products"
+    url = "https://catalogue.dataspace.copernicus.eu/odata/v1/Products"
     
+    # WKT Polygon for the area of interest
     wkt = f"POLYGON(({bbox[0]} {bbox[1]},{bbox[2]} {bbox[1]},{bbox[2]} {bbox[3]},{bbox[0]} {bbox[3]},{bbox[0]} {bbox[1]}))"
 
+    # FIXED: Removed spaces in 'OData.CSC.StringAttribute' and 'OData.CSC.DoubleAttribute'
+    # NOTE: We filter by Collection, productType, tileId, Date, and cloudCover.
     filter_str = (
         f"Collection/Name eq 'SENTINEL-2' and "
-        f"Attributes/OData. CSC. StringAttribute/any(att: att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and "
+        f"Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and "
         f"Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'tileId' and att/OData.CSC.StringAttribute/Value eq '33UXR') and "
         f"ContentDate/Start gt {date_start} and ContentDate/Start lt {date_end} and "
-        f"Attributes/OData.CSC. DoubleAttribute/any(att: att/Name eq 'cloudCover' and att/OData. CSC.DoubleAttribute/Value lt {cloud_thresh})"
+        f"Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt {cloud_thresh})"
     )
 
     params = {
@@ -42,27 +46,30 @@ def search_products_l2a(token, bbox, date_start, date_end, cloud_thresh=20):
         "$top": 5
     }
     
-    r = requests.get(url, params=params, headers={"Authorization":  f"Bearer {token}"})
+    r = requests.get(url, params=params, headers={"Authorization": f"Bearer {token}"})
     
+    # Debugging: If it fails, print the error text from the server to know why
     if r.status_code != 200:
-        print(f"Error:  {r.status_code}")
+        print(f"Error: {r.status_code}")
         print(r.text)
         
     r.raise_for_status()
     
     products = r.json().get("value", [])
+    
+    # Double check we got L2A (though the API filter should handle it)
     l2a_products = [p for p in products if 'MSIL2A' in p['Name']]
     
     if not l2a_products:
         print("No products found matching criteria.")
         return None
         
-    print(f"Found {len(l2a_products)} products.  Returning the first one:  {l2a_products[0]['Name']}")
+    print(f"Found {len(l2a_products)} products. Returning the first one: {l2a_products[0]['Name']}")
     return l2a_products[0]
 
 def download_product_if_needed(product, token, out_dir):
     product_name = product['Name']
-    zip_path = Path(out_dir) / f"{product_name}. zip"
+    zip_path = Path(out_dir) / f"{product_name}.zip"
     if zip_path.exists():
         print(f"{zip_path} exists, skipping download")
         return zip_path
@@ -77,7 +84,7 @@ def download_product_if_needed(product, token, out_dir):
 
 def extract_bands(zip_file, out_dir):
     with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-        zip_ref. extractall(out_dir)
+        zip_ref.extractall(out_dir)
     
     safe_dir = None
     for item in Path(out_dir).iterdir():
@@ -86,11 +93,11 @@ def extract_bands(zip_file, out_dir):
             break
     
     if not safe_dir:
-        raise Exception("No . SAFE folder found")
+        raise Exception("No .SAFE folder found")
     
     img_folder = list(safe_dir.glob('GRANULE/*/IMG_DATA'))
     
-    if not img_folder: 
+    if not img_folder:
         raise Exception("No IMG_DATA folder found")
     
     img_folder = img_folder[0]
@@ -99,7 +106,7 @@ def extract_bands(zip_file, out_dir):
     b02 = list(r10m_folder.glob('*_B02_10m.jp2'))[0]
     b03 = list(r10m_folder.glob('*_B03_10m.jp2'))[0]
     b04 = list(r10m_folder.glob('*_B04_10m.jp2'))[0]
-    b08 = list(r10m_folder.glob('*_B08_10m.jp2'))[0]
+    b08 = list(r10m_folder. glob('*_B08_10m.jp2'))[0]
     
     bands_data = {}
     transform = None
@@ -107,7 +114,7 @@ def extract_bands(zip_file, out_dir):
     
     for band_name, band_path in [('B02', b02), ('B03', b03), ('B04', b04), ('B08', b08)]:
         with rasterio.open(band_path) as src:
-            bands_data[band_name] = src. read(1)
+            bands_data[band_name] = src.read(1)
             if transform is None:
                 transform = src.transform
                 crs = src.crs
@@ -120,11 +127,19 @@ def create_ndvi_geotiff(bands, transform, crs, out_path):
         out_path, 'w', driver='GTiff', height=ndvi.shape[0], width=ndvi.shape[1],
         count=1, dtype=ndvi.dtype, crs=crs, transform=transform
     ) as dst:
-        dst. write(ndvi, 1)
-    return ndvi
+        dst.write(ndvi, 1)
 
-def visualize_rgb(bands, fig_path):
-    rgb = np.stack([bands['B04'], bands['B03'], bands['B02']], axis=0).astype(float)
+def create_rgb_geotiff(bands, transform, crs, out_path):
+    rgb = np.stack([bands['B04'], bands['B03'], bands['B02']], axis=0)
+    with rasterio.open(
+        out_path, 'w', driver='GTiff', height=rgb.shape[1], width=rgb.shape[2],
+        count=3, dtype=rgb.dtype, crs=crs, transform=transform
+    ) as dst:
+        dst.write(rgb)
+
+def visualize_geotiff_rgb(rgb_path, fig_path):
+    with rasterio.open(rgb_path) as src:
+        rgb = src.read().astype(float)
     
     mask = (rgb[0] > 0) & (rgb[1] > 0) & (rgb[2] > 0)
     
@@ -140,6 +155,8 @@ def visualize_rgb(bands, fig_path):
             rgb_display[i] = np.clip((rgb[i] - vmin) / (vmax - vmin), 0, 1)
     
     rgb_display = np. dstack([rgb_display[0], rgb_display[1], rgb_display[2]])
+    
+    # Apply mask to make NoData transparent/black
     rgb_display[~mask] = 0
     
     plt.figure(figsize=(10, 10))
@@ -148,105 +165,48 @@ def visualize_rgb(bands, fig_path):
     plt.axis('off')
     plt.tight_layout()
     plt.savefig(fig_path, dpi=150, bbox_inches='tight')
-    plt.close()
+    plt.show()
 
-def visualize_ndvi(ndvi, fig_path):
-    plt.figure(figsize=(10, 10))
-    plt.imshow(ndvi, cmap='RdYlGn', vmin=-1, vmax=1)
-    plt.title('NDVI (Normalized Difference Vegetation Index)')
-    plt.colorbar(shrink=0.7)
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
-    plt.close()
-
-def get_s2_data(coords:  Dict[str, float], time:  str, is_single_run: bool) -> Any:
-    return None
-
-def process_s2_to_vegetation_map(raw_s2_data: Any) -> Any:
-    return None
-
-def get_vegetation_map(coords: Dict[str, float], time: str, is_single_run: bool) -> Any:
-    module_dir = Path(__file__).parent
-    out_dir_path = module_dir / "data_vegetation"
-    out_dir_path.mkdir(exist_ok=True)
+def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out_dir", default="data_vegetation")
+    args = parser.parse_args()
     
-    ndvi_geotiff_path = out_dir_path / "ndvi_geotiff.tif"
-    rgb_image_path = out_dir_path / "rgb_image.png"
-    ndvi_image_path = out_dir_path / "ndvi_image.png"
-    
-    if ndvi_geotiff_path. exists() and rgb_image_path.exists() and ndvi_image_path.exists():
-        print("Using cached vegetation data...")
-        with rasterio.open(ndvi_geotiff_path) as src:
-            ndvi = src.read(1)
-        return ndvi
-    
-    if ndvi_geotiff_path. exists() and not (rgb_image_path.exists() and ndvi_image_path. exists()):
-        print("GeoTIFF exists but visualizations missing. Recreating visualizations...")
-        
-        with rasterio.open(ndvi_geotiff_path) as src:
-            ndvi = src.read(1)
-        
-        if not ndvi_image_path.exists():
-            visualize_ndvi(ndvi, ndvi_image_path)
-            print(f"Created {ndvi_image_path}")
-        
-        if not rgb_image_path. exists():
-            safe_dirs = list(out_dir_path.glob("*. SAFE"))
-            if safe_dirs:
-                print(f"Found existing SAFE directory, extracting bands for RGB visualization...")
-                safe_dir = safe_dirs[0]
-                img_folder = list(safe_dir.glob('GRANULE/*/IMG_DATA'))[0]
-                r10m_folder = img_folder / 'R10m'
-                
-                b02 = list(r10m_folder.glob('*_B02_10m.jp2'))[0]
-                b03 = list(r10m_folder.glob('*_B03_10m.jp2'))[0]
-                b04 = list(r10m_folder.glob('*_B04_10m.jp2'))[0]
-                
-                bands_data = {}
-                for band_name, band_path in [('B02', b02), ('B03', b03), ('B04', b04)]:
-                    with rasterio.open(band_path) as src:
-                        bands_data[band_name] = src.read(1)
-                
-                visualize_rgb(bands_data, rgb_image_path)
-                print(f"Created {rgb_image_path}")
-        
-        return ndvi
-    
-    print("Cached data not found. Downloading Sentinel-2 data...")
-    
-    from getpass import getpass
-    username = input("CDSE Username: ")
-    password = getpass("Password: ")
-    
+    # Bbox for Kłodzko, ~100x100km zone (approx ±0.45° lat/lon)
     lat0, lon0 = 50.433, 16.653
     delta = 0.45
     bbox = [lon0 - delta, lat0 - delta, lon0 + delta, lat0 + delta]
+    print(f"Looking in bbox: {bbox} (minlon, minlat, maxlon, maxlat)")
+    print("View in OpenStreetMap: Search for these coordinates to see the region.")
     
     date_start = "2025-06-15T00:00:00.000Z"
     date_end = "2025-07-15T23:59:59.999Z"
     
+    username = input("CDSE Username: ")
+    password = getpass("Password: ")
+    
     token = get_access_token(username, password)
+    out_dir_path = Path(args.out_dir)
+    out_dir_path.mkdir(exist_ok=True)
     
-    print("Searching for L2A products...")
+    print("Searching for L2A...")
     prod = search_products_l2a(token, bbox, date_start, date_end)
-    
-    if not prod:
-        print("No Sentinel-2 data found.  Returning NaN array.")
-        return np.full((256, 256), float("nan"))
-    
     zip_path = download_product_if_needed(prod, token, out_dir_path)
     
     print("Extracting bands...")
     bands, transform, crs, _ = extract_bands(zip_path, out_dir_path)
     
-    print("Creating NDVI GeoTIFF...")
-    ndvi = create_ndvi_geotiff(bands, transform, crs, ndvi_geotiff_path)
+    ndvi_path = out_dir_path / "ndvi_geotiff.tif"
+    rgb_path = out_dir_path / "rgb_geotiff.tif"
+    create_ndvi_geotiff(bands, transform, crs, ndvi_path)
+    create_rgb_geotiff(bands, transform, crs, rgb_path)
+    print("NDVI and RGB GeoTIFFs saved.")
     
-    print("Creating visualizations...")
-    visualize_rgb(bands, rgb_image_path)
-    visualize_ndvi(ndvi, ndvi_image_path)
-    
-    print(f"Vegetation data saved to {out_dir_path}")
-    
-    return ndvi
+    fig_path = out_dir_path / "rgb_image.png"
+    visualize_geotiff_rgb(rgb_path, fig_path)
+    print(f"Done! RGB image saved to {fig_path}")
+
+if __name__ == "__main__":
+    from getpass import getpass
+    main()
