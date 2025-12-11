@@ -9,8 +9,10 @@ from fp.modules.data_visualization.data_visualization_module import (
     visualize_topography_data_separate,
 )
 
-DEFAULT_OUT_DIR = os.path.abspath("outputs")
-DEFAULT_DEM = os.path.abspath("fp/modules/topographic/data.tif")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DEFAULT_OUT_DIR = os.path.join(BASE_DIR, "outputs")
+DEFAULT_DEM = os.path.join(BASE_DIR, "data.tif")
 
 DEFAULT_FILES = {
     "dem_filled": "dem_filled.tif",

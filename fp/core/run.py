@@ -12,9 +12,10 @@ def _ensure_out_dir(out_dir: str) -> None:
     os.makedirs(out_dir, exist_ok=True)
 
 def run(coords: Dict[str, float], time: Optional[str], out_dir: str = "outputs") -> Dict[str, Any]:
+    out_dir = os.path.abspath(out_dir)
     _ensure_out_dir(out_dir)
 
-    topo = topographic_module(out_dir=out_dir, visualize=True)
+    topo = topographic_module(out_dir=out_dir, visualize=False)
     veg = get_vegetation_map(coords=coords, time=time or "", is_single_run=True)
     met = meteorological_module(coords=coords, time=time or "")
 
