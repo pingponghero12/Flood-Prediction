@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gmd:MD_Metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:tsxx="http://www.terrasar.com/tsxx/">
+  <gmd:fileIdentifier>
+    <gco:CharacterString>Copernicus_DSM_10_N50_00_E016_00.xml</gco:CharacterString>
+  </gmd:fileIdentifier>
+  <gmd:language>
+    <gmd:LanguageCode codeList="./resources/codeList.xml#LanguageCode" codeListValue="eng">eng</gmd:LanguageCode>
+  </gmd:language>
+  <gmd:characterSet>
+    <gmd:MD_CharacterSetCode codeList="./resources/codeList.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
+  </gmd:characterSet>
+  <gmd:parentIdentifier gco:nilReason="inapplicable" />
+  <gmd:hierarchyLevel>
+    <gmd:MD_ScopeCode codeList="./resources/codeList.xml#MD_ScopeCode" codeListValue="dataset">dataset</gmd:MD_ScopeCode>
+  </gmd:hierarchyLevel>
+  <gmd:hierarchyLevelName gco:nilReason="inapplicable" />
+  <gmd:contact>
+    <gmd:CI_ResponsibleParty>
+      <gmd:individualName>
+        <gco:CharacterString>.</gco:CharacterString>
+      </gmd:individualName>
+      <gmd:organisationName>
+        <gco:CharacterString>Airbus Defence and Space GmbH</gco:CharacterString>
+      </gmd:organisationName>
+      <gmd:positionName>
+        <gco:CharacterString>Product Manager</gco:CharacterString>
+      </gmd:positionName>
+      <gmd:contactInfo>
+        <gmd:CI_Contact>
+          <gmd:phone>
+            <gmd:CI_Telephone>
+              <gmd:voice>
+                <gco:CharacterString>+49 7545 8 4344</gco:CharacterString>
+              </gmd:voice>
+            </gmd:CI_Telephone>
+          </gmd:phone>
+          <gmd:address>
+            <gmd:CI_Address>
+              <gmd:deliveryPoint>
+                <gco:CharacterString>Claude-Dornier-Strasse</gco:CharacterString>
+              </gmd:deliveryPoint>
+              <gmd:city>
+                <gco:CharacterString>Immenstaad</gco:CharacterString>
+              </gmd:city>
+              <gmd:administrativeArea>
+                <gco:CharacterString>Baden-Wuerttemberg</gco:CharacterString>
+              </gmd:administrativeArea>
+              <gmd:postalCode>
+                <gco:CharacterString>88090</gco:CharacterString>
+              </gmd:postalCode>
+              <gmd:country>
+                <gco:CharacterString>Germany</gco:CharacterString>
+              </gmd:country>
+              <gmd:electronicMailAddress>
+                <gco:CharacterString>tsxx-cs@airbus.com</gco:CharacterString>
+              </gmd:electronicMailAddress>
+            </gmd:CI_Address>
+          </gmd:address>
+          <gmd:onlineResource>
+            <gmd:CI_OnlineResource>
+              <gmd:linkage>
+                <gmd:URL>http://www.intelligence-airbusds.com/</gmd:URL>
+              </gmd:linkage>
+              <gmd:protocol>
+                <gco:CharacterString>http</gco:CharacterString>
+              </gmd:protocol>
+              <gmd:name>
+                <gco:CharacterString>Website</gco:CharacterString>
+              </gmd:name>
+              <gmd:description>
+                <gco:CharacterString>provide general information about the point of contact</gco:CharacterString>
+              </gmd:description>
+              <gmd:function>
+                <gmd:CI_OnLineFunctionCode codeList="./resources/codeList.xml#CI_OnLineFunctionCode" codeListValue="information">information</gmd:CI_OnLineFunctionCode>
+              </gmd:function>
+            </gmd:CI_OnlineResource>
+          </gmd:onlineResource>
+        </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+        <gmd:CI_RoleCode codeList="./resources/codeList.xml#CI_RoleCode" codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+      </gmd:role>
+    </gmd:CI_ResponsibleParty>
+  </gmd:contact>
+  <gmd:dateStamp>
+    <gco:Date>2018-01-22</gco:Date>
+  </gmd:dateStamp>
+  <gmd:metadataStandardName>
+    <gco:CharacterString>ISO 19115 Geographic Information – Metadata</gco:CharacterString>
+  </gmd:metadataStandardName>
+  <gmd:metadataStandardVersion>
+    <gco:CharacterString>First edition, 2003-05-01</gco:CharacterString>
+  </gmd:metadataStandardVersion>
+  <gmd:dataSetURI>
+    <gco:CharacterString>Copernicus_DSM_10_N50_00_E016_00</gco:CharacterString>
+  </gmd:dataSetURI>
+  <gmd:spatialRepresentationInfo>
+    <gmd:MD_GridSpatialRepresentation>
+      <gmd:numberOfDimensions>
+        <gco:Integer>2</gco:Integer>
+      </gmd:numberOfDimensions>
+      <gmd:axisDimensionProperties>
+        <gmd:MD_Dimension>
+          <gmd:dimensionName>
+            <gmd:MD_DimensionNameTypeCode codeList="./resources/codeList.xml#MD_DimensionNameTypeCode" codeListValue="column">column</gmd:MD_DimensionNameTypeCode>
+          </gmd:dimensionName>
+          <gmd:dimensionSize>
+            <gco:Integer>1801</gco:Integer>
+          </gmd:dimensionSize>
+          <gmd:resolution>
+            <gco:Scale uom="arc-seconds">2.0</gco:Scale>
+          </gmd:resolution>
+        </gmd:MD_Dimension>
+      </gmd:axisDimensionProperties>
+      <gmd:axisDimensionProperties>
+        <gmd:MD_Dimension>
+          <gmd:dimensionName>
+            <gmd:MD_DimensionNameTypeCode codeList="./resources/codeList.xml#MD_DimensionNameTypeCode" codeListValue="row">row</gmd:MD_DimensionNameTypeCode>
+          </gmd:dimensionName>
+          <gmd:dimensionSize>
+            <gco:Integer>3601</gco:Integer>
+          </gmd:dimensionSize>
+          <gmd:resolution>
+            <gco:Scale uom="arc-seconds">1.0</gco:Scale>
+          </gmd:resolution>
+        </gmd:MD_Dimension>
+      </gmd:axisDimensionProperties>
+      <gmd:cellGeometry>
+        <gmd:MD_CellGeometryCode codeList="./resources/codeList.xml#MD_CellGeometryCode" codeListValue="point">point</gmd:MD_CellGeometryCode>
+      </gmd:cellGeometry>
+      <gmd:transformationParameterAvailability>
+        <gco:Boolean>true</gco:Boolean>
+      </gmd:transformationParameterAvailability>
+    </gmd:MD_GridSpatialRepresentation>
+  </gmd:spatialRepresentationInfo>
+  <gmd:referenceSystemInfo>
+    <gmd:MD_ReferenceSystem>
+      <gmd:referenceSystemIdentifier>
+        <gmd:RS_Identifier>
+          <gmd:code>
+            <gco:CharacterString>horizontal: "WGS84-G1150"</gco:CharacterString>
+          </gmd:code>
+          <gmd:codeSpace>
+            <gco:CharacterString>"http://metadata.dod.mil/mdr/ns/GSIP/crs/"</gco:CharacterString>
+          </gmd:codeSpace>
+        </gmd:RS_Identifier>
+      </gmd:referenceSystemIdentifier>
+    </gmd:MD_ReferenceSystem>
+  </gmd:referenceSystemInfo>
+  <gmd:referenceSystemInfo>
+    <gmd:MD_ReferenceSystem>
+      <gmd:referenceSystemIdentifier>
+        <gmd:RS_Identifier>
+          <gmd:code>
+            <gco:CharacterString>vertical: "WGS 84 Geoid EGM08"</gco:CharacterString>
+          </gmd:code>
+        </gmd:RS_Identifier>
+      </gmd:referenceSystemIdentifier>
+    </gmd:MD_ReferenceSystem>
+  </gmd:referenceSystemInfo>
+  <gmd:identificationInfo>
+    <gmd:MD_DataIdentification>
+      <gmd:citation>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>Copernicus_DSM_10_N50_00_E016_00_DEM.dt2</gco:CharacterString>
+          </gmd:title>
+          <gmd:date>
+            <gmd:CI_Date>
+              <gmd:date>
+                <gco:Date>2019-10-19</gco:Date>
+              </gmd:date>
+              <gmd:dateType>
+                <gmd:CI_DateTypeCode codeList="./resources/codeList.xml#CI_DateTypeCode" codeListValue="creation">creation</gmd:CI_DateTypeCode>
+              </gmd:dateType>
+            </gmd:CI_Date>
+          </gmd:date>
+          <gmd:edition>
+            <gco:CharacterString>01</gco:CharacterString>
+          </gmd:edition>
+          <gmd:editionDate>
+            <gco:Date>2018-01-22</gco:Date>
+          </gmd:editionDate>
+          <gmd:citedResponsibleParty>
+            <gmd:CI_ResponsibleParty>
+              <gmd:organisationName>
+                <gco:CharacterString>Airbus Defence and Space GmbH</gco:CharacterString>
+              </gmd:organisationName>
+              <gmd:role>
+                <gmd:CI_RoleCode codeList="./resources/codeList.xml#CI_RoleCode" codeListValue="author">author</gmd:CI_RoleCode>
+              </gmd:role>
+            </gmd:CI_ResponsibleParty>
+          </gmd:citedResponsibleParty>
+          <gmd:presentationForm>
+            <gmd:CI_PresentationFormCode codeList="./resources/codeList.xml#CI_PresentationFormCode" codeListValue="modelDigital">modelDigital</gmd:CI_PresentationFormCode>
+          </gmd:presentationForm>
+        </gmd:CI_Citation>
+      </gmd:citation>
+      <gmd:abstract>
+        <gco:CharacterString>High Resolution Elevation Data consisting of a fixed resolution grid of elevation values representing a geospatial surface.</gco:CharacterString>
+      </gmd:abstract>
+      <gmd:descriptiveKeywords>
+        <gmd:MD_Keywords>
+          <gmd:keyword>
+            <gco:CharacterString>DEM</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>DSM</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>Elevation</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>Surface</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>Relief</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>TanDEMX</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>WorldDEM</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>DHM</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>DOM</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>MDE</gco:CharacterString>
+          </gmd:keyword>
+          <gmd:keyword>
+            <gco:CharacterString>MDS</gco:CharacterString>
+          </gmd:keyword>
+          </gmd:MD_Keywords>
+      </gmd:descriptiveKeywords>
+      <gmd:resourceConstraints>
+        <gmd:MD_Constraints>
+          <gmd:useLimitation>
+            <gco:CharacterString>INFO/eula_F.pdf</gco:CharacterString>
+          </gmd:useLimitation>
+        </gmd:MD_Constraints>
+      </gmd:resourceConstraints>
+      <gmd:spatialRepresentationType>
+        <gmd:MD_SpatialRepresentationTypeCode codeList="./resources/codeList.xml#MD_SpatialRepresentationTypeCode" codeListValue="grid">grid</gmd:MD_SpatialRepresentationTypeCode>
+      </gmd:spatialRepresentationType>
+      <gmd:language>
+        <gmd:LanguageCode codeList="./resources/codeList.xml#LanguageCode" codeListValue="eng">eng</gmd:LanguageCode>
+      </gmd:language>
+      <gmd:characterSet>
+        <gmd:MD_CharacterSetCode codeList="./resources/codeList.xml#MD_CharacterSetCode" codeListValue="utf8">utf8</gmd:MD_CharacterSetCode>
+      </gmd:characterSet>
+      <gmd:topicCategory>
+        <gmd:MD_TopicCategoryCode>elevation</gmd:MD_TopicCategoryCode>
+      </gmd:topicCategory>
+      <gmd:extent>
+        <gmd:EX_Extent>
+          <gmd:description>
+            <gco:CharacterString>Region_N50E016</gco:CharacterString>
+          </gmd:description>
+          <gmd:geographicElement>
+            <gmd:EX_GeographicBoundingBox>
+              <gmd:westBoundLongitude>
+                <gco:Decimal>16.00000</gco:Decimal>
+              </gmd:westBoundLongitude>
+              <gmd:eastBoundLongitude>
+                <gco:Decimal>17.00000</gco:Decimal>
+              </gmd:eastBoundLongitude>
+              <gmd:southBoundLatitude>
+                <gco:Decimal>50.00000</gco:Decimal>
+              </gmd:southBoundLatitude>
+              <gmd:northBoundLatitude>
+                <gco:Decimal>51.00000</gco:Decimal>
+              </gmd:northBoundLatitude>
+            </gmd:EX_GeographicBoundingBox>
+          </gmd:geographicElement>
+          <gmd:geographicElement>
+            <gmd:EX_BoundingPolygon>
+              <gmd:polygon>
+                <gml:Polygon gml:id="datasetExtents">
+                  <gml:description>N50E016</gml:description>
+                  <gml:exterior>
+                    <gml:LinearRing>
+                      <gml:coordinates>16.00000 50.00000 17.00000 50.00000 17.00000 51.00000 16.00000 51.00000 16.00000 50.00000</gml:coordinates>
+                    </gml:LinearRing>
+                  </gml:exterior>
+                </gml:Polygon>
+              </gmd:polygon>
+            </gmd:EX_BoundingPolygon>
+          </gmd:geographicElement>
+          <gmd:verticalElement>
+            <gmd:EX_VerticalExtent>
+              <gmd:minimumValue>
+                <gco:Real>128.0</gco:Real>
+              </gmd:minimumValue>
+              <gmd:maximumValue>
+                <gco:Real>1423.0</gco:Real>
+              </gmd:maximumValue>
+              <gmd:verticalCRS>
+                <gml:VerticalCRS gml:id="ogp-crs-3855">
+                  <gml:identifier codeSpace="EPSG::3855" />
+                  <gml:scope>Geodesy</gml:scope>
+                  <gml:verticalCS>
+                    <gml:VerticalCS gml:id="epsg-cs-6499">
+                      <gml:identifier codeSpace="EPSG::6499" />
+                      <gml:axis>
+                        <gml:CoordinateSystemAxis gml:id="epsg-axis-114" gml:uom="metre">
+                          <gml:identifier codeSpace="EPSG::9904" />
+                          <gml:axisAbbrev>H</gml:axisAbbrev>
+                          <gml:axisDirection codeSpace="up" />
+                          <gml:maximumValue>9000</gml:maximumValue>
+                        </gml:CoordinateSystemAxis>
+                      </gml:axis>
+                    </gml:VerticalCS>
+                  </gml:verticalCS>
+                  <gml:verticalDatum>
+                    <gml:VerticalDatum gml:id="ogp-datum-1027">
+                      <gml:identifier codeSpace="EPSG::1027" />
+                      <gml:name>EGM2008 geoid</gml:name>
+                      <gml:scope>Geodesy</gml:scope>
+                    </gml:VerticalDatum>
+                  </gml:verticalDatum>
+                </gml:VerticalCRS>
+              </gmd:verticalCRS>
+            </gmd:EX_VerticalExtent>
+          </gmd:verticalElement>
+        </gmd:EX_Extent>
+      </gmd:extent>
+    </gmd:MD_DataIdentification>
+  </gmd:identificationInfo>
+  <gmd:contentInfo>
+    <tsxx:TSXX_addMD>
+      <tsxx:DEMInfo>
+        <tsxx:productVariantInfo>
+          <tsxx:productType>DEM</tsxx:productType>
+          <tsxx:productTypeDescription>layer providing digital elevation model data</tsxx:productTypeDescription>
+          <tsxx:productVariant>DSM</tsxx:productVariant>
+          <tsxx:productVariantDescription>WorldDEM DSM</tsxx:productVariantDescription>
+          <tsxx:resolutionVariant>10</tsxx:resolutionVariant>
+          <tsxx:referenceDocument version="I1.0">http://www.intelligence-airbusds.com/worlddem</tsxx:referenceDocument>
+          <tsxx:productCustomization>true</tsxx:productCustomization>
+          <tsxx:productCustomizationDescr>Copernicus GLO-30 DTED</tsxx:productCustomizationDescr>
+        </tsxx:productVariantInfo>
+        <tsxx:productDetails>
+          <tsxx:imageDetails>
+            <tsxx:imageDataFormat>DTED</tsxx:imageDataFormat>
+            <tsxx:imageDataType>Int</tsxx:imageDataType>
+            <tsxx:imageDataDepth units="bit">16</tsxx:imageDataDepth>
+            <tsxx:numberOfLayers>1</tsxx:numberOfLayers>
+            <tsxx:imageStorageOrder>Column by Column</tsxx:imageStorageOrder>
+            <tsxx:columnContent>Longitude</tsxx:columnContent>
+            <tsxx:rowContent>Latitude</tsxx:rowContent>
+            <tsxx:imageRaster>
+              <tsxx:numberOfRows>3601</tsxx:numberOfRows>
+              <tsxx:numberOfColumns>1801</tsxx:numberOfColumns>
+              <tsxx:columnSpacing units="arcsec">2.0</tsxx:columnSpacing>
+              <tsxx:rowSpacing units="arcsec">1.0</tsxx:rowSpacing>
+              <tsxx:verticalSpacing units="meter">1</tsxx:verticalSpacing>
+            </tsxx:imageRaster>
+            <tsxx:filelocation>
+              <tsxx:host>.</tsxx:host>
+              <tsxx:path>DEM/</tsxx:path>
+              <tsxx:file>Copernicus_DSM_10_N50_00_E016_00_DEM.dt2</tsxx:file>
+            </tsxx:filelocation>
+          </tsxx:imageDetails>
+          <tsxx:productExtent>
+            <tsxx:sizeOfAOI units="square kilometer">7884.55</tsxx:sizeOfAOI>
+            <tsxx:frameCoordsGeographic>
+              <tsxx:EPSG codeList="http://www.epsg.org/" codeListValue="4326">4326</tsxx:EPSG>
+              <tsxx:upperLeftLongitude units="decimal degree">16.00000</tsxx:upperLeftLongitude>
+              <tsxx:upperLeftLatitude units="decimal degree">51.00000</tsxx:upperLeftLatitude>
+              <tsxx:upperRightLongitude units="decimal degree">17.00000</tsxx:upperRightLongitude>
+              <tsxx:upperRightLatitude units="decimal degree">51.00000</tsxx:upperRightLatitude>
+              <tsxx:lowerLeftLongitude units="decimal degree">16.00000</tsxx:lowerLeftLongitude>
+              <tsxx:lowerLeftLatitude units="decimal degree">50.00000</tsxx:lowerLeftLatitude>
+              <tsxx:lowerRightLongitude units="decimal degree">17.00000</tsxx:lowerRightLongitude>
+              <tsxx:lowerRightLatitude units="decimal degree">50.00000</tsxx:lowerRightLatitude>
+            </tsxx:frameCoordsGeographic>
+          </tsxx:productExtent>
+        </tsxx:productDetails>
+	<tsxx:productAddContent>
+          <tsxx:productDescriptor>
+            <tsxx:contentType>Annotation</tsxx:contentType>
+            <tsxx:contentDetail>Metadata</tsxx:contentDetail>
+            <tsxx:contentLongName>Annotation File</tsxx:contentLongName>
+            <tsxx:contentDescription>File, that describe the content of the product in an ISO 19115 compliant manner</tsxx:contentDescription>
+            <tsxx:contentDataFormat>XML</tsxx:contentDataFormat>
+            <tsxx:contentLocation>
+              <tsxx:host>.</tsxx:host>
+              <tsxx:path>./</tsxx:path>
+              <tsxx:file>Copernicus_DSM_10_N50_00_E016_00.xml</tsxx:file>
+            </tsxx:contentLocation>
+          </tsxx:productDescriptor>
+        </tsxx:productAddContent>
+        <tsxx:productStatistics>
+            <tsxx:nrInvalidPixels valueInvalidPixels="-32767">0</tsxx:nrInvalidPixels>
+            <tsxx:nrValidPixels>6485401</tsxx:nrValidPixels>
+            <tsxx:minValue units="meter">128.0</tsxx:minValue>
+            <tsxx:maxValue units="meter">1423.0</tsxx:maxValue>
+            <tsxx:meanValue units="meter">437.730377197</tsxx:meanValue>
+            <tsxx:stdDev units="meter">193.567489624</tsxx:stdDev>
+        </tsxx:productStatistics>
+        <tsxx:productQuality>
+          <tsxx:qualityRemark>Approved</tsxx:qualityRemark>
+          <tsxx:availabilityOfReferenceDataset>true</tsxx:availabilityOfReferenceDataset>
+          <tsxx:absolutePositionalAccuracyLE90 units="meter">1.956</tsxx:absolutePositionalAccuracyLE90>
+          <tsxx:absolutePositionalAccuracyLE68 units="meter">1.698</tsxx:absolutePositionalAccuracyLE68>
+          <tsxx:DateofAnalysis>2018-01-22</tsxx:DateofAnalysis>
+        </tsxx:productQuality>
+        <tsxx:processingDetails>
+            <tsxx:dataProcessing>
+                <tsxx:ProductBaseType>DEM</tsxx:ProductBaseType>
+                <tsxx:citation>
+                  <gmd:CI_Citation>
+                    <gmd:title>
+                      <gco:CharacterString>TDM1_DEM__04_N50E016</gco:CharacterString>
+                    </gmd:title>
+                    <gmd:date>
+                      <gmd:CI_Date>
+                        <gmd:date>
+                          <gco:DateTime>2014-12-02T01:34:55.000000Z</gco:DateTime>
+                        </gmd:date>
+                        <gmd:dateType>
+                          <gmd:CI_DateTypeCode codeList="./resources/codeList.xml#CI_DateTypeCode" codeListValue="creation">creation</gmd:CI_DateTypeCode>
+                        </gmd:dateType>
+                      </gmd:CI_Date>
+                    </gmd:date>
+                    <gmd:citedResponsibleParty>
+                      <gmd:CI_ResponsibleParty>
+                        <gmd:organisationName>
+                          <gco:CharacterString>DLR</gco:CharacterString>
+                        </gmd:organisationName>
+                        <gmd:role>
+                          <gmd:CI_RoleCode codeList="./resources/codeList.xml#CI_RoleCode" codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+                        </gmd:role>
+                      </gmd:CI_ResponsibleParty>
+                    </gmd:citedResponsibleParty>
+                  </gmd:CI_Citation>
+                </tsxx:citation>
+                <tsxx:generationInfo>
+                  <tsxx:demTileIdentifier>TDM1_DEM__04_N50E016</tsxx:demTileIdentifier>
+                  <tsxx:demTileVersion>1</tsxx:demTileVersion>
+                  <tsxx:demTileStatus>COMPLETED</tsxx:demTileStatus>
+                  <tsxx:generationFacility>PGS</tsxx:generationFacility>
+                  <tsxx:copyrightInfo>TanDEM-X Project</tsxx:copyrightInfo>
+                  <tsxx:generationSystem version="5.52">MCP_MOS</tsxx:generationSystem>
+                  <tsxx:generationTime>2014-12-02T01:34:55.000000Z</tsxx:generationTime>
+                  <tsxx:referenceDocument>TD-GS-PS-0021 DEM Product Specification 3.0</tsxx:referenceDocument>
+                  <tsxx:revision>OP_MOS_09</tsxx:revision>
+                  <tsxx:processorDetails>
+                    <tsxx:processingRevision>OP_MOS_09</tsxx:processingRevision>
+                    <tsxx:processingVersionCalOldest>MCP_CAL_V5.71</tsxx:processingVersionCalOldest>
+                    <tsxx:processingVersionCalLatest>MCP_CAL_V5.71</tsxx:processingVersionCalLatest>
+                    <tsxx:processingVersionMosOldest>MCP_MOS_V5.52</tsxx:processingVersionMosOldest>
+                    <tsxx:processingVersionMosLatest>MCP_MOS_V5.52</tsxx:processingVersionMosLatest>
+                    <tsxx:processingVersionArch>MCP_ARCH_V1.30</tsxx:processingVersionArch>
+                    <tsxx:numberOfUsedAcquisitions>16</tsxx:numberOfUsedAcquisitions>
+                    <tsxx:numberOfUsedScenes>50</tsxx:numberOfUsedScenes>
+                    <tsxx:minNumberCoverages>2</tsxx:minNumberCoverages>
+                    <tsxx:maxNumberCoverages>7</tsxx:maxNumberCoverages>
+                    <tsxx:cartographicParameters>
+                      <tsxx:horizontalDatumCode>WGS84-G1150</tsxx:horizontalDatumCode>
+                      <tsxx:verticalDatumCode>WGS84-G1150</tsxx:verticalDatumCode>
+                      <tsxx:coordinateSystem>GEOGRAPHIC</tsxx:coordinateSystem>
+                    </tsxx:cartographicParameters>
+                    <tsxx:processingParameter>
+                      <tsxx:bestResolutionOnGround units="meter">8.41</tsxx:bestResolutionOnGround>
+                      <tsxx:bestVerticalResolution units="meter">0</tsxx:bestVerticalResolution>
+                      <tsxx:phaseInformationIncluded>false</tsxx:phaseInformationIncluded>
+                      <tsxx:accessRegion>GLOBAL</tsxx:accessRegion>
+                      <tsxx:onTopMosaic>false</tsxx:onTopMosaic>
+                      <tsxx:demInterpolationMethod>NONE</tsxx:demInterpolationMethod>
+                    </tsxx:processingParameter>
+                  </tsxx:processorDetails>
+                </tsxx:generationInfo>
+            </tsxx:dataProcessing>
+            <tsxx:postProcessing>
+              <tsxx:citation>
+                  <gmd:CI_Citation>
+                    <gmd:title>
+                      <gco:CharacterString>Copernicus_DSM_10_N50_00_E016_00</gco:CharacterString>
+                    </gmd:title>
+                    <gmd:date>
+                      <gmd:CI_Date>
+                        <gmd:date>
+                          <gco:Date>2019-10-19T01:01:45Z</gco:Date>
+                        </gmd:date>
+                        <gmd:dateType>
+                          <gmd:CI_DateTypeCode codeList="./resources/codeList.xml#CI_DateTypeCode" codeListValue="creation">creation</gmd:CI_DateTypeCode>
+                        </gmd:dateType>
+                      </gmd:CI_Date>
+                    </gmd:date>
+                    <gmd:citedResponsibleParty>
+                      <gmd:CI_ResponsibleParty>
+                        <gmd:organisationName>
+                          <gco:CharacterString>Airbus Defence and Space GmbH</gco:CharacterString>
+                        </gmd:organisationName>
+                        <gmd:role>
+                          <gmd:CI_RoleCode codeList="./resources/codeList.xml#CI_RoleCode" codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+                        </gmd:role>
+                      </gmd:CI_ResponsibleParty>
+                    </gmd:citedResponsibleParty>
+                  </gmd:CI_Citation>
+              </tsxx:citation>
+              <tsxx:editingSystem version="TDX 5.3.1.3657">DEMES Editor</tsxx:editingSystem>
+              <tsxx:resamplingSystem version="1.0.2">ProCT</tsxx:resamplingSystem>
+              <tsxx:tileVersion>01</tsxx:tileVersion>
+            </tsxx:postProcessing>
+        </tsxx:processingDetails>
+      </tsxx:DEMInfo>
+      <tsxx:missionInfo>
+        <tsxx:mission>TDM-1</tsxx:mission>
+        <tsxx:satellite num="1">TSX-1</tsxx:satellite>
+        <tsxx:satellite num="2">TDX-1</tsxx:satellite>
+        <tsxx:source>GS</tsxx:source>
+      </tsxx:missionInfo>
+      <tsxx:acquisitionInfo>
+        <tsxx:sensor>SAR</tsxx:sensor>
+        <tsxx:cooperativeMode>bistatic</tsxx:cooperativeMode>
+        <tsxx:imagingMode>SM</tsxx:imagingMode>
+        <tsxx:lookDirection>right</tsxx:lookDirection>
+        <tsxx:orbitDirection>mixed</tsxx:orbitDirection>
+        <tsxx:polarisationMode>single</tsxx:polarisationMode>
+        <tsxx:polarisation>HH</tsxx:polarisation>
+        <tsxx:temporalCoverage>
+          <tsxx:tsxx_startTime>2011-03-19T16:42:09.930017Z</tsxx:tsxx_startTime>
+          <tsxx:tsxx_stopTime>2013-10-18T05:00:38.912610Z</tsxx:tsxx_stopTime>
+        </tsxx:temporalCoverage>
+      </tsxx:acquisitionInfo>
+    </tsxx:TSXX_addMD>
+  </gmd:contentInfo>
+  <gmd:contentInfo>
+    <gmd:MD_CoverageDescription>
+      <gmd:attributeDescription>
+        <gco:RecordType>digitalSurfaceModel, Int</gco:RecordType>
+      </gmd:attributeDescription>
+      <gmd:contentType>
+        <gmd:MD_CoverageContentTypeCode codeList="./resources/codeList.xml#MD_CoverageContentTypeCode" codeListValue="physicalMeasurement">physicalMeasurement</gmd:MD_CoverageContentTypeCode>
+      </gmd:contentType>
+    </gmd:MD_CoverageDescription>
+  </gmd:contentInfo>
+  <gmd:metadataConstraints>
+    <gmd:MD_LegalConstraints>
+      <gmd:accessConstraints>
+        <gmd:MD_RestrictionCode codeList="./resources/codeList.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+      </gmd:accessConstraints>
+      <gmd:useConstraints>
+        <gmd:MD_RestrictionCode codeList="./resources/codeList.xml#MD_RestrictionCode" codeListValue="copyright">copyright</gmd:MD_RestrictionCode>
+      </gmd:useConstraints>
+      <gmd:otherConstraints gco:nilReason="inapplicable" />
+    </gmd:MD_LegalConstraints>
+  </gmd:metadataConstraints>
+</gmd:MD_Metadata>
