@@ -26,23 +26,45 @@ def get_access_token(username, password):
 def search_products_l2a(token, bbox, date_start, date_end, cloud_thresh=20):
     """Search for L2A products in bbox [(minlon,minlat,maxlon,maxlat)] and date range."""
     url = "https://catalogue.dataspace.copernicus.eu/odata/v1/Products"
+    
+    # WKT Polygon for the area of interest
     wkt = f"POLYGON(({bbox[0]} {bbox[1]},{bbox[2]} {bbox[1]},{bbox[2]} {bbox[3]},{bbox[0]} {bbox[3]},{bbox[0]} {bbox[1]}))"
+
+    # FIXED: Removed spaces in 'OData.CSC.StringAttribute' and 'OData.CSC.DoubleAttribute'
+    # NOTE: We filter by Collection, productType, tileId, Date, and cloudCover.
+    filter_str = (
+        f"Collection/Name eq 'SENTINEL-2' and "
+        f"Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and "
+        f"Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'tileId' and att/OData.CSC.StringAttribute/Value eq '33UXR') and "
+        f"ContentDate/Start gt {date_start} and ContentDate/Start lt {date_end} and "
+        f"Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt {cloud_thresh})"
+    )
+
     params = {
-        "$filter": f"Collection/Name eq 'SENTINEL-2' and "
-                   f"Attributes/OData.CSC.StringAttribute/any(att:att/Name eq 'productType' and att/OData.CSC.StringAttribute/Value eq 'S2MSI2A') and "
-                   f"OData.CSC.Intersects(area=geography'SRID=4326;{wkt}') and "
-                   f"ContentDate/Start gt {date_start} and ContentDate/Start lt {date_end} and "
-                   f"Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt {cloud_thresh})",
+        "$filter": filter_str,
         "$orderby": "ContentDate/Start asc",
         "$top": 5
     }
+    
     r = requests.get(url, params=params, headers={"Authorization": f"Bearer {token}"})
-    print(r)
+    
+    # Debugging: If it fails, print the error text from the server to know why
+    if r.status_code != 200:
+        print(f"Error: {r.status_code}")
+        print(r.text)
+        
     r.raise_for_status()
+    
     products = r.json().get("value", [])
+    
+    # Double check we got L2A (though the API filter should handle it)
     l2a_products = [p for p in products if 'MSIL2A' in p['Name']]
-    assert l2a_products, "No L2A products found"
-    print("diala")
+    
+    if not l2a_products:
+        print("No products found matching criteria.")
+        return None
+        
+    print(f"Found {len(l2a_products)} products. Returning the first one: {l2a_products[0]['Name']}")
     return l2a_products[0]
 
 def download_product_if_needed(product, token, out_dir):
@@ -80,10 +102,11 @@ def extract_bands(zip_file, out_dir):
     
     img_folder = img_folder[0]
     
-    b02 = list(img_folder.glob('*_B02.jp2'))[0]
-    b03 = list(img_folder.glob('*_B03.jp2'))[0]
-    b04 = list(img_folder.glob('*_B04.jp2'))[0]
-    b08 = list(img_folder.glob('*_B08.jp2'))[0]
+    r10m_folder = img_folder / 'R10m'
+    b02 = list(r10m_folder.glob('*_B02_10m.jp2'))[0]
+    b03 = list(r10m_folder.glob('*_B03_10m.jp2'))[0]
+    b04 = list(r10m_folder.glob('*_B04_10m.jp2'))[0]
+    b08 = list(r10m_folder. glob('*_B08_10m.jp2'))[0]
     
     bands_data = {}
     transform = None
@@ -116,17 +139,32 @@ def create_rgb_geotiff(bands, transform, crs, out_path):
 
 def visualize_geotiff_rgb(rgb_path, fig_path):
     with rasterio.open(rgb_path) as src:
-        rgb = src.read()
-    # Normalize for display
-    rgb_display = np.dstack([rgb[0], rgb[1], rgb[2]]) / 10000.0
-    rgb_display = np.clip(rgb_display * 3.5, 0, 1)  # Adjusted for better contrast
-    rgb_display = np.power(rgb_display, 1/2.2)
+        rgb = src.read().astype(float)
+    
+    mask = (rgb[0] > 0) & (rgb[1] > 0) & (rgb[2] > 0)
+    
+    percentile_low = 2
+    percentile_high = 98
+    
+    rgb_display = np.zeros_like(rgb, dtype=float)
+    for i in range(3):
+        valid_data = rgb[i][mask]
+        if len(valid_data) > 0:
+            vmin = np.percentile(valid_data, percentile_low)
+            vmax = np.percentile(valid_data, percentile_high)
+            rgb_display[i] = np.clip((rgb[i] - vmin) / (vmax - vmin), 0, 1)
+    
+    rgb_display = np. dstack([rgb_display[0], rgb_display[1], rgb_display[2]])
+    
+    # Apply mask to make NoData transparent/black
+    rgb_display[~mask] = 0
+    
     plt.figure(figsize=(10, 10))
     plt.imshow(rgb_display)
     plt.title('Sentinel-2 RGB Composite (L2A)')
     plt.axis('off')
     plt.tight_layout()
-    plt.savefig(fig_path, dpi=150)
+    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
     plt.show()
 
 def main():

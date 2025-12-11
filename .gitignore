@@ -207,3 +207,9 @@ marimo/_lsp/
 __marimo__/
 
 fp/modules/vegetation/data_vegetation
+fp/modules/vegetation/wroclaw
+
+outputs
+
+thermo.lib
+trans.lib
