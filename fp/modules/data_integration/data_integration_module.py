@@ -40,7 +40,7 @@ def integrate_data(
         t_height, t_width, topo_profile['transform']
     )
     
-    # We choose Vegetation CRS (UTM) as the Target CRS because it's metric (meters).
+    # We choose Vegetation CRS (UTM) as the Target CRS
     dst_crs = veg_profile['crs']
     
     # Reproject Topo bounds into Veg CRS to check overlap
@@ -49,28 +49,21 @@ def integrate_data(
     )
     
     # Calculate Intersection Coordinates
-    # Overlap is: max(lefts), max(bottoms), min(rights), min(tops)
     inter_left = max(v_left, t_left_proj)
     inter_bottom = max(v_bottom, t_bottom_proj)
     inter_right = min(v_right, t_right_proj)
     inter_top = min(v_top, t_top_proj)
     
-    # Check if they actually overlap
     if inter_left >= inter_right or inter_bottom >= inter_top:
-        print("ERROR: Datasets do not overlap! Check your coordinates.")
-        print(f"Veg Bounds: {v_left}, {v_bottom}, {v_right}, {v_top}")
-        print(f"Topo Bounds (Proj): {t_left_proj}, {t_bottom_proj}, {t_right_proj}, {t_top_proj}")
+        print("ERROR: Datasets do not overlap!")
         return {}
 
     print(f"Intersection Found: {inter_left:.2f}, {inter_bottom:.2f}, {inter_right:.2f}, {inter_top:.2f}")
 
-    # --- Step 2: Define New Grid based on Intersection ---
-    
-    # Calculate new dimensions based on target resolution (30m)
+    # --- Step 2: Define New Grid ---
     dst_width = int((inter_right - inter_left) / target_resolution)
     dst_height = int((inter_top - inter_bottom) / target_resolution)
     
-    # Define the Transform (Anchor is top-left corner of the INTERSECTION)
     dst_transform = rasterio.transform.from_origin(
         inter_left, inter_top, target_resolution, target_resolution
     )
@@ -79,9 +72,9 @@ def integrate_data(
     
     integrated_data = {}
 
-    # --- Step 3: Reproject Both to this New Grid ---
+    # --- Step 3: Reproject Both ---
     
-    # A. Topography
+    # Topography
     print("Cropping & Reprojecting Topography...")
     for key, arr in topography.items():
         if key == "profile" or arr is None: continue
@@ -98,7 +91,7 @@ def integrate_data(
         )
         integrated_data[f"topo_{key}"] = dst_arr
 
-    # B. Vegetation
+    # Vegetation
     print("Cropping & Reprojecting Vegetation...")
     if vegetation.get("ndvi") is not None:
         dst_arr = np.zeros((dst_height, dst_width), dtype=np.float32)
@@ -128,7 +121,6 @@ def integrate_data(
             )
         integrated_data["veg_rgb"] = dst_rgb
 
-    # Meteorology (Pass-through)
     integrated_data["meteorology"] = meteorology
     
     # --- Step 4: Visualize ---
@@ -144,10 +136,9 @@ def visualize_integration(data, out_dir):
     ndvi = data.get("veg_ndvi")
     
     if dem is None:
-        print("Error: DEM data missing in integration results.")
+        print("Error: DEM data missing.")
         return
 
-    # Use a wider figure to verify aspect ratio
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
     
     # Plot DEM
@@ -163,7 +154,8 @@ def visualize_integration(data, out_dir):
         ax2.imshow(rgb_plot)
         ax2.set_title("Vegetation (True Color - Common Subset)")
     elif ndvi is not None:
-        im2 = ax2.imshow(ndvi, cmap='RdYlGn', vmin=-1, vmax=1)
+        # FIXED: Set vmin=0 to ignore water/negative values in visualization
+        im2 = ax2.imshow(ndvi, cmap='RdYlGn', vmin=0, vmax=1)
         ax2.set_title("Vegetation (NDVI - Common Subset)")
         plt.colorbar(im2, ax=ax2, fraction=0.046, pad=0.04)
     else:
@@ -176,8 +168,6 @@ def visualize_integration(data, out_dir):
     save_path = os.path.join(out_dir, "integrated_comparison.png")
     plt.savefig(save_path, dpi=150)
     print(f"Comparison saved to: {save_path}")
-    
-    
     
     try:
         plt.show(block=False)
