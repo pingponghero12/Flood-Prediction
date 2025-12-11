@@ -1,7 +1,9 @@
 from typing import Dict, Any
 import os
+import shutil
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 def _safe_maybe_log(arr):
     if arr is None:
@@ -16,7 +18,7 @@ def _safe_maybe_log2(arr):
         return None
     with np.errstate(divide="ignore", invalid="ignore"):
         out = np.array(arr, dtype=float)
-        out[out <= 0] = np.nan
+        out[out <= 0] = np. nan
         return np.log2(out)
 
 def visualize_topography_data_separate(data: Dict[str, Any], out_dir: str = "outputs") -> None:
@@ -34,7 +36,7 @@ def visualize_topography_data_separate(data: Dict[str, Any], out_dir: str = "out
         fig, ax = plt.subplots(1, 1, figsize=(10, 8))
 
         if arr is None:
-            ax.text(0.5, 0.5, f"Missing: {key}", ha="center", va="center", fontsize=14, color="red")
+            ax.text(0.5, 0.5, f"Missing:  {key}", ha="center", va="center", fontsize=14, color="red")
             ax.axis("off")
             out_path = os.path.join(out_dir, f"{key}_missing.png")
             fig.savefig(out_path, bbox_inches="tight")
@@ -67,12 +69,57 @@ def visualize_topography_data_separate(data: Dict[str, Any], out_dir: str = "out
         fig.savefig(out_path, bbox_inches="tight")
         try:
             plt.show()
-        except Exception:
+        except Exception: 
             plt.close(fig)
 
-def visualize_and_save_all(integrated: Dict[str, Any], prediction: Dict[str, Any], out_dir: str = "outputs"):
-    # simple visualization: if integrated has topography keys, pass to topo visualizer
-    topo_keys = {k: v for k, v in integrated.items() if isinstance(v, (list, tuple, type(None))) or hasattr(v, "shape")}
-    # fallback: integrated may be nested
+def visualize_vegetation_data(out_dir: str = "outputs") -> None:
+    """Copy and display vegetation visualizations from data_vegetation directory."""
+    os.makedirs(out_dir, exist_ok=True)
+    
+    veg_data_dir = Path("fp/modules/vegetation/data_vegetation")
+    rgb_source = veg_data_dir / "rgb_image.png"
+    ndvi_source = veg_data_dir / "ndvi_image.png"
+    
+    # Copy files to output directory
+    if rgb_source.exists():
+        shutil.copy(rgb_source, os.path. join(out_dir, "rgb_image.png"))
+    
+    if ndvi_source.exists():
+        shutil.copy(ndvi_source, os.path.join(out_dir, "ndvi_image.png"))
+    
+    # Display both images side by side
+    if rgb_source.exists() and ndvi_source.exists():
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+        
+        # RGB image
+        rgb_img = plt.imread(rgb_source)
+        ax1.imshow(rgb_img)
+        ax1.set_title('Sentinel-2 RGB Composite (L2A)', fontsize=14)
+        ax1.axis('off')
+        
+        # NDVI image
+        ndvi_img = plt. imread(ndvi_source)
+        ax2.imshow(ndvi_img)
+        ax2.set_title('NDVI (Normalized Difference Vegetation Index)', fontsize=14)
+        ax2.axis('off')
+        
+        plt.tight_layout()
+        combined_path = os.path.join(out_dir, "vegetation_combined.png")
+        plt.savefig(combined_path, dpi=150, bbox_inches='tight')
+        
+        try:
+            plt.show()
+        except Exception:
+            plt. close(fig)
+        
+        print(f"Vegetation visualizations saved to {out_dir}")
+    else:
+        print("Warning:  Vegetation images not found in data_vegetation directory")
+
+def visualize_and_save_all(integrated:  Dict[str, Any], prediction: Dict[str, Any], out_dir: str = "outputs"):
+    # Visualize topography data
     if "topography" in integrated and isinstance(integrated["topography"], dict):
         visualize_topography_data_separate(integrated["topography"], out_dir=out_dir)
+    
+    # Visualize vegetation data
+    visualize_vegetation_data(out_dir=out_dir)
