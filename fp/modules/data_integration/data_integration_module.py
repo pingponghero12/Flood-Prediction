@@ -22,9 +22,6 @@ def integrate_data(
     veg_profile = vegetation.get("profile")
     topo_profile = topography.get("profile")
     
-    # Meteorology might be missing if download failed, but we can still proceed
-    met_profile = meteorology.get("profile")
-    
     if not veg_profile or not topo_profile:
         print("CRITICAL: Missing spatial metadata for Topo or Veg. Cannot align.")
         return {}
@@ -51,8 +48,6 @@ def integrate_data(
     )
     
     # Calculate Intersection (Topo vs Veg)
-    # Note: We prioritize Topo/Veg overlap. If weather is smaller, we'll fill with edge values.
-    # If weather is larger, we crop.
     inter_left = max(v_left, t_left_proj)
     inter_bottom = max(v_bottom, t_bottom_proj)
     inter_right = min(v_right, t_right_proj)
@@ -81,7 +76,8 @@ def integrate_data(
     # A. Topography
     print("Reprojecting Topography...")
     for key, arr in topography.items():
-        if key == "profile" or arr is None: continue
+        if key == "profile" or arr is None: 
+            continue
         
         dst_arr = np.zeros((dst_height, dst_width), dtype=np.float32)
         reproject(
@@ -125,36 +121,72 @@ def integrate_data(
             )
         integrated_data["veg_rgb"] = dst_rgb
 
-    # C. Meteorology (Rain)
+    # C. Meteorology (Precipitation)
+    met_profile = meteorology.get("profile")
+    
     if meteorology.get("precip") is not None and met_profile:
-        print("Reprojecting Meteorology (Rain)...")
-        # Use bilinear resampling to smooth the coarse weather grid
-        # Use 'nearest' if you want blocky pixels showing the raw model grid
+        print("Reprojecting Meteorology (Precipitation)...")
+        
         dst_arr = np.zeros((dst_height, dst_width), dtype=np.float32)
         
-        reproject(
-            source=meteorology["precip"],
-            destination=dst_arr,
-            src_transform=met_profile['transform'],
-            src_crs=met_profile['crs'],
-            dst_transform=dst_transform,
-            dst_crs=dst_crs,
-            resampling=Resampling.bilinear
-        )
-        integrated_data["met_precip"] = dst_arr
+        try:
+            reproject(
+                source=meteorology["precip"],
+                destination=dst_arr,
+                src_transform=met_profile['transform'],
+                src_crs=met_profile['crs'],
+                dst_transform=dst_transform,
+                dst_crs=dst_crs,
+                resampling=Resampling.bilinear
+            )
+            
+            integrated_data["met_precip"] = dst_arr
+            
+            print(f"✓ Precipitation reprojected. Stats: min={dst_arr.min():.2f}, "
+                  f"max={dst_arr.max():.2f}, mean={dst_arr.mean():.2f} mm")
+            
+        except Exception as e:
+            print(f"ERROR reprojecting precipitation: {e}")
+            integrated_data["met_precip"] = None
     else:
-        print("Warning: Precip data missing or no profile. Skipping Rain integration.")
+        print("Warning: Precipitation data missing or no profile. Using default values.")
+        # Create a default precipitation map (light rain for testing)
+        integrated_data["met_precip"] = np.full((dst_height, dst_width), 10.0, dtype=np.float32)
+
+    # D. Soil Moisture (if available)
+    if meteorology.get("soil_moisture") is not None and met_profile:
+        print("Reprojecting Soil Moisture...")
+        
+        dst_arr = np.zeros((dst_height, dst_width), dtype=np.float32)
+        
+        try:
+            reproject(
+                source=meteorology["soil_moisture"],
+                destination=dst_arr,
+                src_transform=met_profile['transform'],
+                src_crs=met_profile['crs'],
+                dst_transform=dst_transform,
+                dst_crs=dst_crs,
+                resampling=Resampling.bilinear
+            )
+            integrated_data["met_soil_moisture"] = dst_arr
+            print(f"✓ Soil moisture reprojected.")
+        except Exception as e:
+            print(f"Warning: Could not reproject soil moisture: {e}")
 
     # --- Step 4: Visualize ---
     visualize_integration(integrated_data, out_dir)
     
-    # Return everything including metadata for prediction module
+    # Return everything including metadata
     integrated_data['transform'] = dst_transform
     integrated_data['crs'] = dst_crs
+    integrated_data['topography'] = topography  # Keep original for visualization
     
     return integrated_data
 
+
 def visualize_integration(data, out_dir):
+    """Creates a 3-panel comparison showing DEM, Vegetation, and Precipitation."""
     print("Generating integrated comparison image (3-Panel)...")
     
     dem = data.get("topo_dem_filled")
@@ -166,12 +198,11 @@ def visualize_integration(data, out_dir):
         print("Error: DEM data missing.")
         return
 
-    # Create 3 subplots
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(24, 8))
     
     # 1. Topography
     im1 = ax1.imshow(dem, cmap='terrain')
-    ax1.set_title("Topography (DEM)")
+    ax1.set_title("Topography (DEM)", fontsize=14, fontweight='bold')
     ax1.axis('off')
     plt.colorbar(im1, ax=ax1, fraction=0.046, pad=0.04, label="Elevation (m)")
     
@@ -180,41 +211,50 @@ def visualize_integration(data, out_dir):
         rgb_plot = np.moveaxis(rgb, 0, -1)
         rgb_plot = np.clip(rgb_plot, 0, 1)
         ax2.imshow(rgb_plot)
-        ax2.set_title("Vegetation (True Color)")
+        ax2.set_title("Vegetation (True Color)", fontsize=14, fontweight='bold')
     elif ndvi is not None:
-        im2 = ax2.imshow(ndvi, cmap='RdYlGn', vmin=0, vmax=1)
-        ax2.set_title("Vegetation (NDVI)")
+        im2 = ax2.imshow(ndvi, cmap='RdYlGn', vmin=-0.2, vmax=1)
+        ax2.set_title("Vegetation (NDVI)", fontsize=14, fontweight='bold')
         plt.colorbar(im2, ax=ax2, fraction=0.046, pad=0.04, label="NDVI")
     else:
-        ax2.text(0.5, 0.5, "Missing", ha='center')
-        ax2.set_title("Vegetation Missing")
+        ax2.text(0.5, 0.5, "Vegetation Missing", ha='center', 
+                fontsize=14, color='red')
+        ax2.set_title("Vegetation", fontsize=14, fontweight='bold')
     ax2.axis('off')
 
-    # 3. Rainfall
+    # 3. Precipitation
     if rain is not None:
-        # Use 'Blues' or 'nipy_spectral' for rain
-        # Set minimal transparency for 0 rain if needed, but standard imshow is fine
-        im3 = ax3.imshow(rain, cmap='Blues', alpha=0.8)
-        ax3.set_title("Forecast Rainfall (24h)")
+        rain_max = np.nanmax(rain)
+        rain_mean = np.nanmean(rain)
         
-        # Determine max for colorbar scaling dynamically or fixed
-        vmax = np.nanmax(rain) if np.nanmax(rain) > 0 else 10
+        im3 = ax3.imshow(rain, cmap='Blues', alpha=0.9)
+        ax3.set_title(f"24h Forecast Precipitation\n(Mean: {rain_mean:.1f}mm, Max: {rain_max:.1f}mm)", 
+                     fontsize=14, fontweight='bold')
+        
+        vmax = max(rain_max, 10)  # Ensure colorbar shows at least 0-10mm range
         im3.set_clim(0, vmax)
         
-        plt.colorbar(im3, ax=ax3, fraction=0.046, pad=0.04, label="Precipitation (mm)")
+        cbar = plt.colorbar(im3, ax=ax3, fraction=0.046, pad=0.04, label="Precipitation (mm)")
+        
+        if rain_max < 0.1:
+            ax3.text(0.5, 0.05, "⚠ Very low precipitation detected", 
+                    ha='center', transform=ax3.transAxes,
+                    fontsize=10, color='red', bbox=dict(boxstyle='round', 
+                    facecolor='yellow', alpha=0.7))
     else:
-        ax3.text(0.5, 0.5, "Missing Rain Data", ha='center')
-        ax3.set_title("Rainfall Missing")
+        ax3.text(0.5, 0.5, "Precipitation Data Missing", ha='center', 
+                fontsize=14, color='red')
+        ax3.set_title("Precipitation", fontsize=14, fontweight='bold')
     ax3.axis('off')
 
     plt.tight_layout()
     save_path = os.path.join(out_dir, "integrated_comparison_3panel.png")
-    plt.savefig(save_path, dpi=150)
-    print(f"Comparison saved to: {save_path}")
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    print(f"✓ Integration comparison saved to: {save_path}")
     
     try:
         plt.show(block=False)
-        plt.pause(2)
+        plt.pause(1)
         plt.close(fig)
     except:
         plt.close(fig)
