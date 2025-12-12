@@ -208,8 +208,10 @@ __marimo__/
 
 fp/modules/vegetation/data_vegetation
 fp/modules/vegetation/wroclaw
+fp/modules/meteorological/data_meteorology/
 
 outputs
 
 thermo.lib
 trans.lib
+
